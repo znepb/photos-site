@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Photos</title>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>    
+    </head>
+    <body>
+        <div class="modal fade" id="editLocation" tabindex="-1" role="dialog" aria-labelledby="editLocation" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit Location</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">Location</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Los Angeles" aria-label="City" id="cityValue">
+                            <input type="text" class="form-control" placeholder="California" aria-label="Region" id="regionValue">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="saveLocation();" id="saveLocation">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editDate" tabindex="-1" role="dialog" aria-labelledby="editDate" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit Date</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">Date</span>
+                            </div>
+                            <input type="date" class="form-control" aria-label="Date" id="dateValue">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="saveDate();" id="saveDate">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="deleteConfirm" tabindex="-1" role="dialog" aria-labelledby="deleteConfirm" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Delete Confirmation</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Please confirm you want to delete <span id="delete-name"></span>.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" onclick="deleteAction();" id="deleteConfirm">Delete</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Nevermind</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-xl" style="margin-top: 30px;" id="container">
+            <h6>Admin Mode</h6>
+            <h1>My Photos</h1>
+            <p>Currently <span id="amount"></span> photos.</p>
+            <p>The operator of this server has not provided a license for their files.</p>
+
+            <div class="card-columns" id="cards">
+            </div>
+
+            <h3>Upload Photo</h3>
+            <form action="/photos/upload" method="POST" id="form" enctype="multipart/form-data">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Taken Date</span>
+                    </div>
+                    <input type="date" class="form-control" placeholder="Taken Date" name="date" aria-label="Taken Date" aria-describedby="basic-addon1">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Location</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="Los Angeles" name="city" aria-label="City" aria-describedby="basic-addon1">
+                    <input type="text" class="form-control" placeholder="California" name="region" aria-label="Region" aria-describedby="basic-addon1">
+                </div>
+                <input type="file" name="file" style="margin-bottom: 1rem;">
+                <br />
+                <input type="submit" class="btn btn-primary" style="margin-bottom: 2rem;"> 
+            </form>
+
+            <h3>Log Out</h3>
+            <button onclick="logout();" class="btn btn-primary">Log Out</button>
+            <div style="height: 30rem"></div>
+
+            <div style="text-align: center;">
+                Made with ♥ by <a href="https://znepb.me">znepb</a> - Hosted by me - <a href="https://github.com/znepb/photos-site">⭐ this on GitHub</a>
+            </div>
+        </div>
+
+        <script>
+            let activeID;
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+
+            function logout() {
+                var cookies = document.cookie.split(";");
+
+                for (var i = 0; i < cookies.length; i++) {
+                    let cookie = cookies[i];
+                    let eqPos = cookie.indexOf("=");
+                    let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                }
+
+                document.location.replace("/");
+            }
+
+            function s(id) {
+                return document.querySelector(id);
+            }
+
+            function cElem(type, clazz, parent) {
+                const elem = document.createElement(type);
+                elem.className = clazz;
+                parent.appendChild(elem);
+                return elem;
+            }
+
+            if(urlParams.get("success")) {
+                let elem = document.createElement("div");
+                elem.className = "alert alert-success alert-dismissible fade show";
+                elem.setAttribute("role", "alert");
+                elem.innerText = urlParams.get("success");
+
+                let button = document.createElement("button");
+                button.className = "close";
+                button.type = "button";
+                button.setAttribute("data-dismiss", "alert");
+                button.setAttribute("aria-label", "Close");
+                
+                let closeSymbol = document.createElement("span");
+                closeSymbol.setAttribute("aria-hidden", true);
+                closeSymbol.innerHTML = "&times;";
+
+                elem.appendChild(button);
+                button.append(closeSymbol);
+
+                s("#container").prepend(elem);
+            }
+
+            function deleteAction() {
+                document.location.replace("/photos/delete/" + activeID);
+            }
+
+            function saveLocation() {
+                document.location.replace(`/photos/updateLocation/${activeID}?region=${s("#regionValue").value}&city=${s("#cityValue").value}`);
+            }
+
+            function saveDate() {
+                document.location.replace(`/photos/updateDate/${activeID}?timestamp=${s("#dateValue").value}`);
+            }
+
+            const Http = new XMLHttpRequest();
+                const url = '/photos/photos.json';
+                Http.open("GET", url);
+                Http.send();
+
+                Http.onreadystatechange = (e) => {
+                    if(Http.readyState == 4) {
+                        let randomized = [];
+                        let availableNumbers = {};
+
+                        const jsonContent = JSON.parse(Http.responseText);
+                        console.log(jsonContent[0]);
+
+                        //document.querySelector("span#amount").innerText = jsonContent.length;
+                        let row = 1;
+
+                        for(let i = 0; i < jsonContent.length; i++) {
+                            if(jsonContent[i]) {
+                                let v = jsonContent[i];
+
+                                const main = cElem("div", "card", s("#cards"));
+
+                                cElem("div", "card-header", main).innerText = `${v.id}${v.fileType} - ${v.timestamp}, ${v.location}`;
+
+                                const img = cElem("img", "card-img-top", main);
+                                img.src = `/photos/preview-${v.id}${v.fileType}`;
+                                img.alt = `${v.id}${v.fileType}`;
+
+                                const body = cElem("div", "card-body", main);
+                                
+                                const editLoc = cElem("button", "btn btn-primary", body);
+                                const editDate = cElem("button", "btn btn-primary", body);
+                                const del = cElem("button", "btn btn-danger", body);
+
+                                editLoc.innerText = "Edit Location";
+                                editLoc.style.marginRight = "5px";
+                                editLoc.setAttribute("data-toggle", "modal");
+                                editLoc.setAttribute("data-target", "#editLocation");
+                                editLoc.addEventListener("click", function() {
+                                    activeID = v.id;
+                                })
+
+                                editDate.innerText = "Edit Date";
+                                editDate.style.marginRight = "5px";
+                                editDate.setAttribute("data-toggle", "modal");
+                                editDate.setAttribute("data-target", "#editDate");
+                                editDate.addEventListener("click", function() {
+                                    activeID = v.id;
+                                })
+
+                                del.innerText = "Delete";
+                                del.setAttribute("data-toggle", "modal");
+                                del.setAttribute("data-target", "#deleteConfirm");
+                                del.addEventListener("click", function() {
+                                    activeID = v.id;
+                                    s("#delete-name").innerText = `${v.id}${v.fileType}`;
+                                })
+                            }
+
+                            row++;
+                            if(row == 4) { row = 1; }
+                        }
+                    }
+                }
+        </script>
+    </body>
+</html>

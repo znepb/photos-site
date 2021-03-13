@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Downloads</title>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>    </head>
+    
+        <style>
+            .card-img-top {
+                border-radius: 0 0 calc(.25rem - 1px) calc(.25rem - 1px);
+            }
+        </style>
+    <body>
+        <div class="container-xl" style="margin-top: 30px;">
+            <h1>My Photos</h1>
+            <p>Currently <span id="amount"></span> photos.</p>
+            <p>The operator of this server has not provided a license for their files.</p>
+
+            <div class="card-columns" id="cards">
+            </div>
+
+            <form action="/photo-auth" method="post" style="text-align: center; padding: 2rem 0 2rem">
+                <input type="password" required name="password" autocomplete="current-password"> <input type="submit">
+            </form>
+
+            <div style="text-align: center;">
+                Made with ♥ by <a href="https://znepb.me">znepb</a> - Hosted by me - ⭐ this on GitHub
+            </div>
+        </div>
+
+        <script>
+            function s(id) {
+                return document.querySelector(id);
+            }
+
+            function cElem(type, clazz, parent) {
+                const elem = document.createElement(type);
+                elem.className = clazz;
+                parent.appendChild(elem);
+                return elem;
+            }
+
+            const Http = new XMLHttpRequest();
+            const url = '/photos/photos.json';
+            Http.open("GET", url);
+            Http.send();
+            
+            Http.onreadystatechange = (e) => {
+                if(Http.readyState == 4) {
+                    let randomized = [];
+                    let availableNumbers = {};
+
+                    const jsonContent = JSON.parse(Http.responseText);
+                    let row = 1;
+
+                    s("#amount").innerText = jsonContent.length;
+
+                    for(let i = 0; i < jsonContent.length; i++) {
+                        if(jsonContent[i]) {
+                            let v = jsonContent[i];
+
+                            const main = cElem("div", "card", s("#cards"));
+
+                            cElem("div", "card-header", main).innerText = `${v.id}${v.fileType} - ${v.timestamp}, ${v.location}`;
+
+                            const img = cElem("img", "card-img-top", main);
+                            img.src = `/photos/preview-${v.id}${v.fileType}`;
+                            img.alt = `${v.id}${v.fileType}`;
+                        }
+
+                        row++;
+                        if(row == 4) { row = 1; }
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
