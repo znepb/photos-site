@@ -15,6 +15,8 @@ npm run prod
 ```
 Make sure to change `authToken.txt` to a (recomended 16 character) random string, and change `password.txt` to a valid SHA256 hash of a passowrd. Also, it is reccomended to change all occourences of `me` in `index-admin.html` and `index.html` to your name. Just graze over the doccuments, you'll find the locations. Also, add a license type thing to them as well, so people can't steal your photos without permission. As of now, there's not much configuration.
 
+***IF USING CLOUDFLARE, DISABLE CACHING ON PHOTOS PAGE!!!***
+
 ## What It Does
 You'll log in with your passowrd, and you can upload, delete, and change photos, from any device. Photos will automaticly be resized to be a good size for a website.
 
